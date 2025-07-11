@@ -1,0 +1,93 @@
+version: '3.8'
+
+services:
+  ubuntu1:
+    image: ubuntu:latest
+    volumes:
+    - volume1:/home/root
+    command: bash -c "apt update && apt install iputils-ping -y && tail -f /dev/null"
+    tty: true
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+    networks:
+      - lan-network
+
+  ubuntu2:
+    image: ubuntu:latest
+    volumes: 
+    - volume1:/home/root
+    command: bash -c "apt update && apt install curl -y && tail -f /dev/null"
+    tty: true
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+    networks:
+      - lan-network
+ 
+  apache:
+    image: httpd:laurent
+    ports:
+      - "80:80"    
+    deploy:
+      mode: global  # Déploie sur TOUS les nœuds
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    networks:
+      - lan-network
+
+  database:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: testdb
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password123
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == worker  
+      restart_policy:
+        condition: on-failure
+    networks:
+      - lan-network
+
+  adminer:
+    image: adminer:latest
+    ports:
+      - '8888:8080'
+    depends_on:
+      - database
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == worker
+    networks:
+      - lan-network
+
+networks:
+  lan-network:
+    driver: overlay  # Obligatoire pour Swarm
+    attachable: true
+
+volumes:
+  volume1:
+    driver: local
+  db_data:
+    driver: local

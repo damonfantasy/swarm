@@ -1,0 +1,33 @@
+global:
+  scrape_interval: 30s
+  evaluation_interval: 30s
+  external_labels:
+    cluster: 'docker-swarm'
+
+rule_files:
+  # - "first_rules.yml"
+  # - "second_rules.yml"
+
+scrape_configs:
+  # Prometheus lui-même
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Node Exporter sur tous les nodes
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: 
+          - '192.168.1.20:9100'    # Manager
+          - '192.168.1.28:9100'      # Worker 1 - À adapter
+          - '192.168.1.108:9100'      # Worker 2 - À adapter
+    scrape_interval: 15s
+
+  # cAdvisor sur tous les nodes
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets:
+          - '192.168.1.20:8080'    # Manager
+          - '192.168.1.28:8080'      # Worker 1 - À adapter
+          - '192.168.1.108:8080'      # Worker 2 - À adapter
+    scrape_interval: 15s

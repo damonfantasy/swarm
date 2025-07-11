@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  grafana:
+    image: grafana/grafana:10.1.0
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin123
+      - GF_INSTALL_PLUGINS=grafana-piechart-panel
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - grafana_config:/etc/grafana
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager  # Grafana sur le manager
+      restart_policy:
+        condition: on-failure
+        delay: 10s
+        max_attempts: 3
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
+    networks:
+      - monitoring
+
+volumes:
+  grafana_data:
+  grafana_config:
+
+networks:
+  monitoring:
+    external: true
