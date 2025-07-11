@@ -15,4 +15,4 @@ sleep 15
 #Arrêt des 2 capteurs
 docker stack rm monitoring
 
-echo "Le stack MY-APP peut maintenant être arrêté"
+echo "La stack MY-APP peut maintenant être arrêté"
