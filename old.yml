@@ -1,0 +1,57 @@
+#version: '3.8'
+
+services:
+
+  ubuntu1:
+    image: ubuntu:latest
+    container_name: ubuntu_cont1
+    volumes:
+      - volume1:/home/root
+    command: bash -c "apt update && apt install iputils-ping -y && tail -f /dev/null"
+    tty: true
+
+  ubuntu2:
+    image: ubuntu:latest
+    container_name: ubuntu_cont2
+    volumes: 
+      - volume1:/home/root
+    command: bash -c "apt update && apt install curl -y && tail -f /dev/null"
+    tty: true
+ 
+  apache:
+    image: httpd:latest
+    container_name: apache_cont
+    ports:
+      - "80:80"  
+    volumes:
+    - /home/laurent/Documents/Docker/exo10/:/usr/local/apache2/htdocs/
+
+  database:
+    image: postgres:15-alpine
+    container_name: postgres_cont
+    environment:
+      POSTGRES_DB: testdb
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password123
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  adminer:
+    image: adminer:latest
+    container_name: adminer_cont
+    ports:
+      - '8080:8080'
+    depends_on:
+      - database
+
+
+
+networks: # Réseaux personnalisés
+  lan-network:
+    driver: bridge
+
+
+volumes:
+  volume1:
+  db_data:
+
