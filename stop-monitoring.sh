@@ -1,6 +1,8 @@
 #!/bin/bash
 
 echo "Arrêt du monitoring"
+echo "-------------------"
+echo "-------------------"
 
 # Arrêt de Grafana
 docker stack rm grafana
@@ -15,4 +17,4 @@ sleep 15
 #Arrêt des 2 capteurs
 docker stack rm monitoring
 
-echo "La stack MY-APP peut maintenant être arrêté"
+echo "La stack MY-APP peut maintenant être arrêtée"
