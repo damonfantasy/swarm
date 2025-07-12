@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   ubuntu1:
-    image: ubuntu:latest
+    image: ubuntu:22.04
     volumes:
     - volume1:/home/root
     command: bash -c "apt update && apt install iputils-ping -y && tail -f /dev/null"
@@ -16,7 +16,7 @@ services:
       - lan-network
 
   ubuntu2:
-    image: ubuntu:latest
+    image: ubuntu:20.04
     volumes: 
     - volume1:/home/root
     command: bash -c "apt update && apt install curl -y && tail -f /dev/null"
