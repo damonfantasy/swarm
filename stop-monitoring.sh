@@ -1,11 +1,20 @@
 #!/bin/bash
 
+echo "Arrêt du monitoring"
+echo "-------------------"
+
+# Arrêt de Grafana
 docker stack rm grafana
 
 sleep 15
 
+#Arrêt de Prometheus
 docker stack rm prometheus
 
 sleep 15
 
-docker stack rm monitoring 
+#Arrêt des 2 capteurs
+docker stack rm monitoring
+
+echo "-------------------"
+echo "La stack MY-APP peut maintenant être arrêtée"
